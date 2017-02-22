@@ -422,6 +422,10 @@ namespace ExmMaker2
                     listaPytan2 = (List<Pytanie>)serializer.Deserialize(r);
                     r.Close();
                 }
+                if (listaPytan2[0].czyPytaniaLosowo)
+                {
+                    WypelnianieListy(listaPytan2.Count);
+                }
                 for (int i = 0; i < listaPytan2.Count; i++)
                 {
                     listaOdpowiedziUzytkownika.Add(new List<bool>());
@@ -430,10 +434,7 @@ namespace ExmMaker2
                         listaOdpowiedziUzytkownika[i].Add(false);
                     }
                 }
-                if (listaPytan2[0].czyPytaniaLosowo)
-                {
-                    WypelnianieListy(listaPytan2.Count);
-                }
+                button7.Enabled = false;
                 if (listaPytan2[0].minuty != 0)
                 {
                     DialogResult d = MessageBox.Show("Test ma ustawiony limit czasowy " + listaPytan2[0].minuty + " minut, Nacisnij 'tak' gdy bedziesz gotowy", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
@@ -510,10 +511,15 @@ namespace ExmMaker2
             pictureBox2.ImageLocation = "";
             MessageBox.Show("Zakończyłeś test, zdobyłeś " + liczbaPoprawnychOdpowiedziUzytkownika + " punktów z " + liczbaMozliwychPoprawnychOdpowiedzi + " możliwych", "WYNIKI");
             button10.Enabled = false;
+            listaPytan3.Clear();
+            listaPytan2.Clear();
             liczbaMozliwychPoprawnychOdpowiedzi = 0;
             liczbaPoprawnychOdpowiedziUzytkownika = 0;
+            listaUzytych.Clear();
+            listaPotrzebna.Clear();
             index2 = 1;
-        
+            button7.Enabled = true;
+
         }
         public int RandomIndex(int a)//funkcja ktora wyrzuca liczbe randomową nie potwarzająca sie indeksach (a to ilosc pytan)
         {
