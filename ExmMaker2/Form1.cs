@@ -549,14 +549,13 @@ namespace ExmMaker2
             }
             listaPytan2 = listaPytan3;
         }
-
-        private void timer1_Tick(object sender, EventArgs e)
+        private void timer1_Tick_1(object sender, EventArgs e)
         {
             t -= new TimeSpan(0, 0, 1);
             label7.Text = t.ToString();
-            if(t == new TimeSpan(0,0,0))
+            if (t == new TimeSpan(0, 0, 0))
             {
-                button10_Click(sender,e);
+                button10_Click(sender, e);
                 label7.Text = "";
                 timer1.Stop();
             }

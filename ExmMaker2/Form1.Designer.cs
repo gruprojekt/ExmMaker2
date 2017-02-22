@@ -103,12 +103,14 @@
             // 
             this.splitContainer1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainer1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer1.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainer1.Location = new System.Drawing.Point(3, 3);
             this.splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
             this.splitContainer1.Panel1.AutoScroll = true;
+            this.splitContainer1.Panel1.BackColor = System.Drawing.Color.Transparent;
             this.splitContainer1.Panel1.ImeMode = System.Windows.Forms.ImeMode.NoControl;
             // 
             // splitContainer1.Panel2
@@ -337,6 +339,7 @@
             // 
             this.splitContainer2.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.splitContainer2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer2.FixedPanel = System.Windows.Forms.FixedPanel.Panel2;
             this.splitContainer2.Location = new System.Drawing.Point(3, 3);
             this.splitContainer2.Name = "splitContainer2";
             // 
@@ -356,7 +359,7 @@
             this.splitContainer2.Panel2.Controls.Add(this.button7);
             this.splitContainer2.Panel2.Paint += new System.Windows.Forms.PaintEventHandler(this.splitContainer2_Panel2_Paint);
             this.splitContainer2.Size = new System.Drawing.Size(890, 645);
-            this.splitContainer2.SplitterDistance = 495;
+            this.splitContainer2.SplitterDistance = 497;
             this.splitContainer2.TabIndex = 0;
             // 
             // button7
@@ -364,7 +367,7 @@
             this.button7.Dock = System.Windows.Forms.DockStyle.Bottom;
             this.button7.Location = new System.Drawing.Point(0, 591);
             this.button7.Name = "button7";
-            this.button7.Size = new System.Drawing.Size(387, 50);
+            this.button7.Size = new System.Drawing.Size(385, 50);
             this.button7.TabIndex = 0;
             this.button7.Text = "Otwórz test z pliku";
             this.button7.UseVisualStyleBackColor = true;
@@ -382,9 +385,10 @@
             // button8
             // 
             this.button8.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.button8.AutoSize = true;
             this.button8.Location = new System.Drawing.Point(0, 541);
             this.button8.Name = "button8";
-            this.button8.Size = new System.Drawing.Size(114, 44);
+            this.button8.Size = new System.Drawing.Size(116, 44);
             this.button8.TabIndex = 2;
             this.button8.Text = "<-";
             this.button8.UseVisualStyleBackColor = true;
@@ -393,7 +397,8 @@
             // button9
             // 
             this.button9.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.button9.Location = new System.Drawing.Point(274, 541);
+            this.button9.AutoSize = true;
+            this.button9.Location = new System.Drawing.Point(270, 541);
             this.button9.Name = "button9";
             this.button9.Size = new System.Drawing.Size(115, 44);
             this.button9.TabIndex = 3;
@@ -403,17 +408,21 @@
             // 
             // pictureBox2
             // 
-            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.Location = new System.Drawing.Point(3, 202);
             this.pictureBox2.Name = "pictureBox2";
-            this.pictureBox2.Size = new System.Drawing.Size(381, 333);
+            this.pictureBox2.Size = new System.Drawing.Size(379, 333);
             this.pictureBox2.TabIndex = 4;
             this.pictureBox2.TabStop = false;
             // 
             // button10
             // 
+            this.button10.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
+            this.button10.AutoSize = true;
             this.button10.Enabled = false;
-            this.button10.Location = new System.Drawing.Point(120, 541);
+            this.button10.Location = new System.Drawing.Point(119, 541);
             this.button10.Name = "button10";
             this.button10.Size = new System.Drawing.Size(148, 44);
             this.button10.TabIndex = 5;
@@ -423,6 +432,7 @@
             // 
             // label7
             // 
+            this.label7.Anchor = System.Windows.Forms.AnchorStyles.Left;
             this.label7.AutoSize = true;
             this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.label7.Location = new System.Drawing.Point(3, 89);
@@ -432,15 +442,19 @@
             // 
             // timer1
             // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.BackColor = System.Drawing.SystemColors.ButtonShadow;
             this.ClientSize = new System.Drawing.Size(904, 677);
             this.Controls.Add(this.tabControl1);
+            this.Cursor = System.Windows.Forms.Cursors.Hand;
+            this.ForeColor = System.Drawing.SystemColors.InfoText;
             this.Name = "Form1";
+            this.ShowIcon = false;
             this.Text = "ExmMaker2";
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
