@@ -3,22 +3,37 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Serialization;
 
 namespace ExmMaker2
 {
     public partial class Form1 : Form
     {
+        // tab 1
         List<Pytanie> listaPytan = new List<Pytanie>();
         List<TextBox> listaText = new List<TextBox>();
         List<RadioButton> listaRadio = new List<RadioButton>();
         List<CheckBox> listaCheck = new List<CheckBox>();
-
-
         int index = 1;
+
+        // tab2
+        List<Pytanie> listaPytan2 = new List<Pytanie>();
+        List<TextBox> listaText2 = new List<TextBox>();
+        List<RadioButton> listaRadio2 = new List<RadioButton>();
+        List<CheckBox> listaCheck2 = new List<CheckBox>();
+        List<List<bool>> listaOdpowiedziUzytkownika = new List<List<bool>>();
+        int liczbaPoprawnychOdpowiedziUzytkownika = 0;
+        int liczbaMozliwychPoprawnychOdpowiedzi = 0;
+        int index2 = 1;
+        List<int> listaUzytych = new List<int>();
+        List<int> listaPotrzebna = new List<int>();
+        List<Pytanie> listaPytan3 = new List<Pytanie>();
+        TimeSpan t = new TimeSpan(0 , 0, 0);
         public Form1()
         {
             InitializeComponent();
@@ -27,25 +42,39 @@ namespace ExmMaker2
         }
         private void Wyswietlanie()
         {
-            if (index - 1 < 0)
+            if (listaPytan.Count == 0)
             {
+                listaPytan.Add(new Pytanie());
 
+            }
+            label1.Text = index + "/" + listaPytan.Count;
+            numericUpDown2.Value = listaPytan[0].minuty;
+            if (listaPytan[index - 1].czyJestObraz)
+            {
+                pictureBox1.ImageLocation = (listaPytan[index - 1].pathObrazka);
             }
             else
             {
-                if (index > listaPytan.Count)
-                {
-                    listaPytan.Add(new Pytanie());
-                }
-
-                label1.Text = index.ToString();
-                checkBox1.Checked = listaPytan[index - 1].czyJednaOdpowiedz;
-                checkBox2.Checked = listaPytan[index - 1].czyJestObraz;
-                checkBox3.Checked = listaPytan[index - 1].czyPytaniaLosowo;
-                numericUpDown1.Value = listaPytan[index - 1].trescOdpowiedzi.Count;
-                stworzOdpowiedzi();
+                pictureBox1.ImageLocation = "";
             }
-       }
+            //numericUpDown1.Value = listaPytan[index - 1].trescOdpowiedzi.Count;
+            textBox1.Text = listaPytan[index - 1].trescPytania;
+            checkBox1.Checked = listaPytan[index - 1].czyJednaOdpowiedz;
+            checkBox2.Checked = listaPytan[index - 1].czyJestObraz;
+            checkBox3.Checked = listaPytan[0].czyPytaniaLosowo;
+            for (int i = 0; i < listaPytan[index -1].trescOdpowiedzi.Count; i++)
+            {
+                listaText[i].Text = listaPytan[index - 1].trescOdpowiedzi[i];
+                if (listaPytan[index - 1].czyJednaOdpowiedz)
+                {
+                    listaRadio[i].Checked = listaPytan[index - 1].ktorePoprawne[i];
+                }
+                else
+                {
+                    listaCheck[i].Checked = listaPytan[index - 1].ktorePoprawne[i];
+                }
+            }
+        }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
@@ -54,12 +83,15 @@ namespace ExmMaker2
                 listaPytan[index - 1].trescOdpowiedzi.Add("");
                 listaPytan[index - 1].ktorePoprawne.Add(false);
             }
-            if (numericUpDown1.Value < listaPytan[index-1].trescOdpowiedzi.Count)
+            else
             {
-                listaPytan[index - 1].trescOdpowiedzi.RemoveAt((int)numericUpDown1.Value);
-                listaPytan[index - 1].ktorePoprawne.RemoveAt((int)numericUpDown1.Value);
+                if (listaPytan[index - 1].trescOdpowiedzi.Count != 0 && numericUpDown1.Value < listaPytan[index - 1].trescOdpowiedzi.Count)
+                {
+                    listaPytan[index - 1].trescOdpowiedzi.RemoveAt(listaPytan[index - 1].trescOdpowiedzi.Count - 1);
+                    listaPytan[index - 1].ktorePoprawne.RemoveAt(listaPytan[index - 1].ktorePoprawne.Count - 1);
+                }
             }
-
+            stworzOdpowiedzi();
             Wyswietlanie();
         }
         private void stworzOdpowiedzi()
@@ -70,7 +102,7 @@ namespace ExmMaker2
             listaText.Clear();
             listaCheck.Clear();
             listaRadio.Clear();
-            for (int i = 0; i < listaPytan[index-1].trescOdpowiedzi.Count; i++)
+            for (int i = 0; i < listaPytan[index - 1].trescOdpowiedzi.Count; i++)
             {
                 Point polozenie_textboxa = new Point(x, y);
                 listaText.Add(new TextBox());
@@ -79,83 +111,449 @@ namespace ExmMaker2
                 listaText[i].Size = new System.Drawing.Size(250, 35);
                 listaText[i].ScrollBars = ScrollBars.Vertical;
                 splitContainer1.Panel1.Controls.Add(listaText[i]);
-                listaText[i].Text = listaPytan[index-1].trescOdpowiedzi[i];
+                listaText[i].TabIndex = i;
+                listaText[i].TextChanged += new EventHandler(textChanged);
+
                 if (listaPytan[index-1].czyJednaOdpowiedz)
                 {
                     Point polozenie_radio = new Point(x + 270, y);
                     listaRadio.Add(new RadioButton());
                     listaRadio[i].Location = polozenie_radio;
+                    listaRadio[i].TabIndex = i;
+                    listaRadio[i].CheckedChanged += new EventHandler(radioCheckedChanged);
                     splitContainer1.Panel1.Controls.Add(listaRadio[i]);
-                    listaRadio[i].Checked = listaPytan[index - 1].ktorePoprawne[i];
                 }
                 else
                 {
                     Point polozenie_check = new Point(x + 270, y);
                     listaCheck.Add(new CheckBox());
                     listaCheck[i].Location = polozenie_check;
+                    listaCheck[i].TabIndex = i;
+                    listaCheck[i].CheckedChanged += new EventHandler(checkCheckedChanged);
                     splitContainer1.Panel1.Controls.Add(listaCheck[i]);
-                    listaCheck[i].Checked = listaPytan[index - 1].ktorePoprawne[i];
                 }
                 y = y + 40;
             }
         }
+        private void stworzOdpowiedzi2()
+        {
+            int x = 20;
+            int y = 30;
+            label6.Text = index2 + "/" + listaPytan2.Count;
+            splitContainer2.Panel1.Controls.Clear();
+            listaText2.Clear();
+            listaCheck2.Clear();
+            listaRadio2.Clear();
+            Point polozenie_label = new Point(x, y);
+            TextBox textbox = new TextBox();
+            textbox.Size = new System.Drawing.Size(400, 50);
+            textbox.Multiline = true;
+            textbox.ReadOnly = true;
+            textbox.ScrollBars = ScrollBars.Vertical;
+            textbox.Text = listaPytan2[index2 - 1].trescPytania;
+            textbox.Location = polozenie_label;
+            splitContainer2.Panel1.Controls.Add(textbox);
+            y = y + textbox.Height + 10;
 
+            pictureBox2.ImageLocation = (listaPytan2[index2 - 1].pathObrazka);
+
+            for (int i = 0; i < listaPytan2[index2 - 1].trescOdpowiedzi.Count; i++)
+            {
+
+
+                Point polozenie_textboxa = new Point(x, y);
+                listaText2.Add(new TextBox());
+                listaText2[i].Location = polozenie_textboxa;
+                listaText2[i].ReadOnly = true;
+                listaText2[i].Multiline = true;
+                listaText2[i].Size = new System.Drawing.Size(250, 35);
+                listaText2[i].ScrollBars = ScrollBars.Vertical;
+                splitContainer2.Panel1.Controls.Add(listaText2[i]);
+                listaText2[i].Text = listaPytan2[index2 - 1].trescOdpowiedzi[i];
+                if (listaPytan2[index2 - 1].czyJednaOdpowiedz)
+                {
+                    Point polozenie_radio = new Point(x + 270, y);
+                    listaRadio2.Add(new RadioButton());
+                    listaRadio2[i].Location = polozenie_radio;
+                    splitContainer2.Panel1.Controls.Add(listaRadio2[i]);
+                    listaRadio2[i].TabIndex = i;
+                    listaRadio2[i].CheckedChanged += new EventHandler(radioCheckedChanged2);
+                    listaRadio2[i].Checked = listaOdpowiedziUzytkownika[index2 - 1][i];
+                }
+                else
+                {
+                    Point polozenie_check = new Point(x + 270, y);
+                    listaCheck2.Add(new CheckBox());
+                    listaCheck2[i].Location = polozenie_check;
+                    splitContainer2.Panel1.Controls.Add(listaCheck2[i]);
+                    listaCheck2[i].TabIndex = i;
+                    listaCheck2[i].CheckedChanged += new EventHandler(checkCheckedChanged2);
+                    listaCheck2[i].Checked = listaOdpowiedziUzytkownika[index2 - 1][i];
+                }
+                y = y + 40;
+            }
+        }
+        protected void radioCheckedChanged(object sender,EventArgs e)
+        {
+            RadioButton radio = sender as RadioButton;
+            listaPytan[index - 1].ktorePoprawne[radio.TabIndex] = radio.Checked;
+        }
+        protected void checkCheckedChanged(object sender, EventArgs e)
+        {
+            CheckBox check = sender as CheckBox;
+            listaPytan[index - 1].ktorePoprawne[check.TabIndex] = check.Checked;
+        }
+        protected void radioCheckedChanged2(object sender, EventArgs e)
+        {
+            RadioButton radio = sender as RadioButton;
+            listaOdpowiedziUzytkownika[index2 - 1][radio.TabIndex] = radio.Checked;
+        }
+        protected void checkCheckedChanged2(object sender, EventArgs e)
+        {
+            CheckBox check = sender as CheckBox;
+            listaOdpowiedziUzytkownika[index2 - 1][check.TabIndex] = check.Checked;
+        }
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            Dopisz();
             listaPytan[index - 1].czyJednaOdpowiedz = checkBox1.Checked;
+            stworzOdpowiedzi();
             Wyswietlanie();
         }
 
         private void checkBox2_CheckedChanged(object sender, EventArgs e)
         {
-            Dopisz();
             listaPytan[index - 1].czyJestObraz = checkBox2.Checked;
+            stworzOdpowiedzi();
+            if (checkBox2.Checked && listaPytan[index -1].pathObrazka == "")
+            {
+                OpenFileDialog dlg = new OpenFileDialog();
+
+                dlg.Title = "Open Image";
+                dlg.Filter = "bmp files (*.bmp)|*.bmp";
+
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+                    listaPytan[index - 1].pathObrazka = dlg.FileName;
+                }
+                else
+                {
+                    listaPytan[index - 1].czyJestObraz = false;
+                    checkBox2.Checked = false;
+                }
+
+                dlg.Dispose();
+            }
+            if (!checkBox2.Checked)
+            {
+                listaPytan[index - 1].pathObrazka = "";
+            }
             Wyswietlanie();
         }
 
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
-            Dopisz();
-            listaPytan[index - 1].czyPytaniaLosowo = checkBox3.Checked;
+            for (int i = 0; i < listaPytan.Count; i++)
+            {
+                listaPytan[i].czyPytaniaLosowo = checkBox3.Checked;
+            }
+            stworzOdpowiedzi();
             Wyswietlanie();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (index > 1)
+            if (index <= 1)
             {
-                Dopisz();
+
+            }
+            else
+            {
                 index--;
+                numericUpDown1.Value = listaPytan[index - 1].trescOdpowiedzi.Count;
+                stworzOdpowiedzi();
                 Wyswietlanie();
             }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            Dopisz();
-            index++;
-            Wyswietlanie();
-        }
-        private void Dopisz()
-        {
-            if (listaPytan[index -1].trescOdpowiedzi.Count != 0)
+            if (listaPytan[index - 1].trescPytania != "" && listaPytan[index -1].trescOdpowiedzi.Count != 0)
             {
-                for (int i = 0; i < listaText.Count; i++)
-                {
-                    listaPytan[index - 1].trescOdpowiedzi[i] = listaText[i].Text;
-                    if (listaPytan[index - 1].czyJednaOdpowiedz)
-                    {
 
-                        listaPytan[index - 1].ktorePoprawne[i] = listaRadio[i].Checked;
-                    }
-                    else
-                    {
-                        listaPytan[index - 1].ktorePoprawne[i] = listaCheck[i].Checked;
-                    }
+
+                if (index == listaPytan.Count)
+                {
+                    listaPytan.Add(new Pytanie());
                 }
+                index++;
+                numericUpDown1.Value = listaPytan[index - 1].trescOdpowiedzi.Count;
+                stworzOdpowiedzi();
+                Wyswietlanie();
+            }
+            else
+            {
+                MessageBox.Show("Nie możesz stworzyć nowego pytania jeżeli nie uzupełniłeś poprzedniego");
             }
         }
 
+        protected void textChanged(object sender, EventArgs e)
+        {
+            TextBox textbox = sender as TextBox;
+            listaPytan[index - 1].trescOdpowiedzi[textbox.TabIndex] = textbox.Text;
+
+        }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            listaPytan[index - 1].trescPytania = textBox1.Text;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (index == 1)
+            {
+                listaPytan.RemoveAt(index - 1);
+            }
+            if (listaPytan.Count > 1 && index > 1)
+            {
+                listaPytan.RemoveAt(index - 1);
+                index--;
+            }
+            if (listaPytan.Count > 0)
+            {
+                numericUpDown1.Value = listaPytan[index - 1].trescOdpowiedzi.Count;
+            }
+            else
+            {
+                Wyswietlanie();
+                numericUpDown1.Value = listaPytan[index - 1].trescOdpowiedzi.Count;
+            }
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            for (int i = 0; i < listaPytan.Count; i++)
+            {
+                listaPytan[i].minuty = (int)numericUpDown2.Value;
+            }
+            Wyswietlanie();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            try
+            {
+
+
+                SaveFileDialog dialog = new SaveFileDialog();
+                dialog.Filter = "(*.xml)|*.xml";
+                dialog.ShowDialog();
+
+                if (dialog.FileName != "")
+                {
+                    StreamWriter wr = new StreamWriter(dialog.FileName); //To służy do zapisu danych
+                    XmlSerializer serializer = new XmlSerializer(typeof(List<Pytanie>)); //To będzie je formatowało :)
+                    serializer.Serialize(wr, listaPytan); //Serializujemy
+                    wr.Flush();
+                    wr.Close();
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Nie udało się zapisać pliku");
+            }
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            DialogResult d = MessageBox.Show("Jestes pewny ? Stracisz dotychczasowy postęp.", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+
+            if (d == DialogResult.Yes)
+
+            {
+                listaPytan.Clear();
+                Wyswietlanie();
+                numericUpDown1.Value = listaPytan[index - 1].trescOdpowiedzi.Count;
+            }
+
+            else if (d == DialogResult.No)
+
+            {
+
+            }
+       }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                openFileDialog1.Filter = "(*.xml) | *.xml";
+                openFileDialog1.Title = "Wybierz test";
+
+                if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    StreamReader r = new StreamReader(openFileDialog1.FileName);
+                    XmlSerializer serializer = new XmlSerializer(typeof(List<Pytanie>));
+                    listaPytan = (List<Pytanie>)serializer.Deserialize(r);
+                    r.Close();
+                }
+                index = 1;
+                numericUpDown1.Value = listaPytan[index - 1].trescOdpowiedzi.Count;
+            }
+            catch
+            {
+                MessageBox.Show("Nie udało się otworzyć pliku");
+            }
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                OpenFileDialog openFileDialog1 = new OpenFileDialog();
+                openFileDialog1.Filter = "(*.xml) | *.xml";
+                openFileDialog1.Title = "Wybierz test";
+
+                if (openFileDialog1.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    StreamReader r = new StreamReader(openFileDialog1.FileName);
+                    XmlSerializer serializer = new XmlSerializer(typeof(List<Pytanie>));
+                    listaPytan2 = (List<Pytanie>)serializer.Deserialize(r);
+                    r.Close();
+                }
+                for (int i = 0; i < listaPytan2.Count; i++)
+                {
+                    listaOdpowiedziUzytkownika.Add(new List<bool>());
+                    for (int j = 0; j < listaPytan2[i].ktorePoprawne.Count; j++)
+                    {
+                        listaOdpowiedziUzytkownika[i].Add(false);
+                    }
+                }
+                if (listaPytan2[0].czyPytaniaLosowo)
+                {
+                    WypelnianieListy(listaPytan2.Count);
+                }
+                if (listaPytan2[0].minuty != 0)
+                {
+                    DialogResult d = MessageBox.Show("Test ma ustawiony limit czasowy " + listaPytan2[0].minuty + " minut, Nacisnij 'tak' gdy bedziesz gotowy", "Question", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                    if (d == DialogResult.Yes)
+
+                    {
+                        t = new TimeSpan(0, listaPytan2[0].minuty, 0);
+                        timer1.Start();
+                        stworzOdpowiedzi2();
+                        button10.Enabled = true;
+                    }
+                    else if (d == DialogResult.No)
+                    {
+                        button10_Click(sender, e);
+                    }
+
+                }
+                else
+                {
+                    stworzOdpowiedzi2();
+                    button10.Enabled = true;
+                }
+            }
+            catch
+            {
+                MessageBox.Show("Nie udało się otworzyć pliku");
+            }
+        }
+
+        private void splitContainer2_Panel2_Paint(object sender, PaintEventArgs e)
+        {
+
+        }
+
+        private void button9_Click(object sender, EventArgs e)
+        {
+            if (index2 < listaPytan2.Count)
+            {
+                index2++;
+                stworzOdpowiedzi2();
+            }
+        }
+
+        private void button8_Click(object sender, EventArgs e)
+        {
+            if (index2 > 1)
+            {
+                index2--;
+                stworzOdpowiedzi2();
+            }
+        }
+
+        private void button10_Click(object sender, EventArgs e)
+        {
+            for (int i = 0; i < listaPytan2.Count; i++)
+            {
+                for (int j = 0; j < listaPytan2[i].ktorePoprawne.Count; j++)
+                {
+                    if (listaOdpowiedziUzytkownika[i][j] == true && listaPytan2[i].ktorePoprawne[j] == true)
+                    {
+                        liczbaPoprawnychOdpowiedziUzytkownika++;
+                    }
+                    if (listaPytan2[i].ktorePoprawne[j] == true)
+                    {
+                        liczbaMozliwychPoprawnychOdpowiedzi++;
+                    }
+                }
+            }
+            label7.Text = "";
+            timer1.Stop();
+            splitContainer2.Panel1.Controls.Clear();
+            listaOdpowiedziUzytkownika.Clear();
+            label6.Text = "";
+            pictureBox2.ImageLocation = "";
+            MessageBox.Show("Zakończyłeś test, zdobyłeś " + liczbaPoprawnychOdpowiedziUzytkownika + " punktów z " + liczbaMozliwychPoprawnychOdpowiedzi + " możliwych", "WYNIKI");
+            button10.Enabled = false;
+            liczbaMozliwychPoprawnychOdpowiedzi = 0;
+            liczbaPoprawnychOdpowiedziUzytkownika = 0;
+            index2 = 1;
+        
+        }
+        public int RandomIndex(int a)//funkcja ktora wyrzuca liczbe randomową nie potwarzająca sie indeksach (a to ilosc pytan)
+        {
+            Random rnd = new Random();
+            int liczba = 0;
+            bool OK = true;
+            while (OK)
+            {
+                liczba = rnd.Next(0, (a));
+                if (!listaUzytych.Contains(liczba))
+                {
+                    listaUzytych.Add(liczba);
+                    OK = false;
+                }
+            }
+            return liczba;
+        }
+        public void WypelnianieListy(int a)// tutaj wypelniamy liste indeksow aby moc w innej kolejnosci wyrzucac pytania
+        {
+            for (int i = 0; i < a; i++)
+            {
+                this.listaPotrzebna.Add(RandomIndex(a));
+            }
+            foreach (int value in listaPotrzebna)
+            {
+                listaPytan3.Add(listaPytan2[value]);
+            }
+            listaPytan2 = listaPytan3;
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            t -= new TimeSpan(0, 0, 1);
+            label7.Text = t.ToString();
+            if(t == new TimeSpan(0,0,0))
+            {
+                button10_Click(sender,e);
+                label7.Text = "";
+                timer1.Stop();
+            }
+        }
     }
 }
