@@ -532,6 +532,7 @@ namespace ExmMaker2
             listaPytan2.Clear();
             liczbaMozliwychPoprawnychOdpowiedzi = 0;
             liczbaPoprawnychOdpowiedziUzytkownika = 0;
+            liczbaNiepoprawnychOdpowiedziUzytkownika = 0;
             listaUzytych.Clear();
             listaPotrzebna.Clear();
             index2 = 1;
