@@ -23,7 +23,7 @@ namespace ExmMaker2
 
         // tab2
         List<Pytanie> listaPytan2 = new List<Pytanie>();
-        List<TextBox> listaText2 = new List<TextBox>();
+        List<CustomTextBox> listaText2 = new List<CustomTextBox>();
         List<RadioButton> listaRadio2 = new List<RadioButton>();
         List<CheckBox> listaCheck2 = new List<CheckBox>();
         List<List<bool>> listaOdpowiedziUzytkownika = new List<List<bool>>();
@@ -38,6 +38,7 @@ namespace ExmMaker2
         {
             InitializeComponent();
             listaPytan.Add(new Pytanie());
+            this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             Wyswietlanie();
         }
         private void Wyswietlanie()
@@ -137,6 +138,7 @@ namespace ExmMaker2
         }
         private void stworzOdpowiedzi2()
         {
+
             int x = 20;
             int y = 30;
             label6.Text = index2 + "/" + listaPytan2.Count;
@@ -145,13 +147,14 @@ namespace ExmMaker2
             listaCheck2.Clear();
             listaRadio2.Clear();
             Point polozenie_label = new Point(x, y);
-            TextBox textbox = new TextBox();
+            CustomTextBox textbox = new CustomTextBox();
             textbox.Size = new System.Drawing.Size(400, 50);
             textbox.Multiline = true;
             textbox.ReadOnly = true;
             textbox.ScrollBars = ScrollBars.Vertical;
             textbox.Text = listaPytan2[index2 - 1].trescPytania;
             textbox.Location = polozenie_label;
+            textbox.BorderStyle = BorderStyle.None;
             splitContainer2.Panel1.Controls.Add(textbox);
             y = y + textbox.Height + 10;
 
@@ -159,10 +162,36 @@ namespace ExmMaker2
 
             for (int i = 0; i < listaPytan2[index2 - 1].trescOdpowiedzi.Count; i++)
             {
+                if (listaPytan2[index2 - 1].czyJednaOdpowiedz)
+                {
+                    Point polozenie_radio = new Point(x, y - 5);
+                    listaRadio2.Add(new RadioButton());
+                    listaRadio2[i].Location = polozenie_radio;
+                    listaRadio2[i].AutoSize = false;
+                    listaRadio2[i].Width = 30;
+                    listaRadio2[i].Height = 30;
+                    splitContainer2.Panel1.Controls.Add(listaRadio2[i]);
+                    listaRadio2[i].TabIndex = i;
+                    listaRadio2[i].CheckedChanged += new EventHandler(radioCheckedChanged2);
+                    listaRadio2[i].Checked = listaOdpowiedziUzytkownika[index2 - 1][i];
 
+                }
+                else
+                {
+                    Point polozenie_check = new Point(x, y - 5);
+                    listaCheck2.Add(new CheckBox());
+                    listaCheck2[i].Location = polozenie_check;
+                    listaCheck2[i].AutoSize = false;
+                    listaCheck2[i].Width = 30;
+                    listaCheck2[i].Height = 30;
+                    splitContainer2.Panel1.Controls.Add(listaCheck2[i]);
+                    listaCheck2[i].TabIndex = i;
+                    listaCheck2[i].CheckedChanged += new EventHandler(checkCheckedChanged2);
+                    listaCheck2[i].Checked = listaOdpowiedziUzytkownika[index2 - 1][i];
+                }
 
-                Point polozenie_textboxa = new Point(x, y);
-                listaText2.Add(new TextBox());
+                Point polozenie_textboxa = new Point(x + 40, y);
+                listaText2.Add(new CustomTextBox());
                 listaText2[i].Location = polozenie_textboxa;
                 listaText2[i].ReadOnly = true;
                 listaText2[i].Multiline = true;
@@ -170,27 +199,9 @@ namespace ExmMaker2
                 listaText2[i].ScrollBars = ScrollBars.Vertical;
                 splitContainer2.Panel1.Controls.Add(listaText2[i]);
                 listaText2[i].Text = listaPytan2[index2 - 1].trescOdpowiedzi[i];
-                if (listaPytan2[index2 - 1].czyJednaOdpowiedz)
-                {
-                    Point polozenie_radio = new Point(x + 270, y);
-                    listaRadio2.Add(new RadioButton());
-                    listaRadio2[i].Location = polozenie_radio;
-                    splitContainer2.Panel1.Controls.Add(listaRadio2[i]);
-                    listaRadio2[i].TabIndex = i;
-                    listaRadio2[i].CheckedChanged += new EventHandler(radioCheckedChanged2);
-                    listaRadio2[i].Checked = listaOdpowiedziUzytkownika[index2 - 1][i];
-                }
-                else
-                {
-                    Point polozenie_check = new Point(x + 270, y);
-                    listaCheck2.Add(new CheckBox());
-                    listaCheck2[i].Location = polozenie_check;
-                    splitContainer2.Panel1.Controls.Add(listaCheck2[i]);
-                    listaCheck2[i].TabIndex = i;
-                    listaCheck2[i].CheckedChanged += new EventHandler(checkCheckedChanged2);
-                    listaCheck2[i].Checked = listaOdpowiedziUzytkownika[index2 - 1][i];
-                }
+                listaText2[i].BorderStyle = BorderStyle.None;
                 y = y + 40;
+
             }
         }
         protected void radioCheckedChanged(object sender,EventArgs e)
@@ -558,6 +569,22 @@ namespace ExmMaker2
                 button10_Click(sender, e);
                 label7.Text = "";
                 timer1.Stop();
+            }
+        }
+        public static bool SetStyle(Control c, ControlStyles Style, bool value)
+        {
+            bool retval = false;
+            Type typeTB = typeof(Control);
+            System.Reflection.MethodInfo misSetStyle = typeTB.GetMethod("SetStyle", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
+            if (misSetStyle != null && c != null) { misSetStyle.Invoke(c, new object[] { Style, value }); retval = true; }
+            return retval;
+        }
+        public partial class CustomTextBox : TextBox
+        {
+            public CustomTextBox()
+            {
+                SetStyle(ControlStyles.SupportsTransparentBackColor, true);
+                BackColor = Color.Transparent;
             }
         }
     }
