@@ -29,6 +29,7 @@ namespace ExmMaker2
         List<List<bool>> listaOdpowiedziUzytkownika = new List<List<bool>>();
         int liczbaPoprawnychOdpowiedziUzytkownika = 0;
         int liczbaMozliwychPoprawnychOdpowiedzi = 0;
+        int liczbaNiepoprawnychOdpowiedziUzytkownika = 0;
         int index2 = 1;
         List<int> listaUzytych = new List<int>();
         List<int> listaPotrzebna = new List<int>();
@@ -513,6 +514,10 @@ namespace ExmMaker2
                     {
                         liczbaMozliwychPoprawnychOdpowiedzi++;
                     }
+                    if (listaOdpowiedziUzytkownika[i][j] != listaPytan2[i].ktorePoprawne[j] && listaOdpowiedziUzytkownika[i][j] == true)
+                    {
+                        liczbaNiepoprawnychOdpowiedziUzytkownika++;
+                    }
                 }
             }
             label7.Text = "";
@@ -521,7 +526,7 @@ namespace ExmMaker2
             listaOdpowiedziUzytkownika.Clear();
             label6.Text = "";
             pictureBox2.ImageLocation = "";
-            MessageBox.Show("Zakończyłeś test, zdobyłeś " + liczbaPoprawnychOdpowiedziUzytkownika + " punktów z " + liczbaMozliwychPoprawnychOdpowiedzi + " możliwych", "WYNIKI");
+            MessageBox.Show("Zakończyłeś test, zdobyłeś " + liczbaPoprawnychOdpowiedziUzytkownika + " punktów z " + liczbaMozliwychPoprawnychOdpowiedzi + " możliwych, pomylileś się "+ liczbaNiepoprawnychOdpowiedziUzytkownika+ " razy", "WYNIKI");
             button10.Enabled = false;
             listaPytan3.Clear();
             listaPytan2.Clear();

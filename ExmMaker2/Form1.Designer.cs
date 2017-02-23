@@ -61,8 +61,8 @@
             this.label6 = new System.Windows.Forms.Label();
             this.button7 = new System.Windows.Forms.Button();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.textBox2 = new System.Windows.Forms.TextBox();
+            this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -154,7 +154,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(435, 122);
+            this.label5.Location = new System.Drawing.Point(348, 126);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(32, 13);
             this.label5.TabIndex = 16;
@@ -163,7 +163,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(302, 123);
+            this.label4.Location = new System.Drawing.Point(215, 126);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(78, 13);
             this.label4.TabIndex = 15;
@@ -171,7 +171,7 @@
             // 
             // numericUpDown2
             // 
-            this.numericUpDown2.Location = new System.Drawing.Point(386, 120);
+            this.numericUpDown2.Location = new System.Drawing.Point(299, 124);
             this.numericUpDown2.Name = "numericUpDown2";
             this.numericUpDown2.Size = new System.Drawing.Size(43, 20);
             this.numericUpDown2.TabIndex = 14;
@@ -193,7 +193,7 @@
             this.button4.Image = ((System.Drawing.Image)(resources.GetObject("button4.Image")));
             this.button4.Location = new System.Drawing.Point(160, 226);
             this.button4.Name = "button4";
-            this.button4.Size = new System.Drawing.Size(149, 54);
+            this.button4.Size = new System.Drawing.Size(157, 54);
             this.button4.TabIndex = 12;
             this.button4.Text = "Zapisz do pliku";
             this.button4.TextImageRelation = System.Windows.Forms.TextImageRelation.TextAboveImage;
@@ -205,7 +205,7 @@
             this.button3.Image = ((System.Drawing.Image)(resources.GetObject("button3.Image")));
             this.button3.Location = new System.Drawing.Point(160, 168);
             this.button3.Name = "button3";
-            this.button3.Size = new System.Drawing.Size(149, 52);
+            this.button3.Size = new System.Drawing.Size(157, 52);
             this.button3.TabIndex = 11;
             this.button3.Text = "Usuń pytanie";
             this.button3.TextAlign = System.Drawing.ContentAlignment.BottomCenter;
@@ -265,11 +265,11 @@
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(257, 145);
+            this.checkBox3.Location = new System.Drawing.Point(218, 145);
             this.checkBox3.Name = "checkBox3";
-            this.checkBox3.Size = new System.Drawing.Size(210, 17);
+            this.checkBox3.Size = new System.Drawing.Size(249, 17);
             this.checkBox3.TabIndex = 5;
-            this.checkBox3.Text = "Mieszane pytania przy rozwiązywaniu ?";
+            this.checkBox3.Text = "Losowo dobierane pytania przy rozwiązywaniu?";
             this.checkBox3.UseVisualStyleBackColor = true;
             this.checkBox3.CheckedChanged += new System.EventHandler(this.checkBox3_CheckedChanged);
             // 
@@ -454,14 +454,10 @@
             this.tabPage3.Text = "About";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // timer1
-            // 
-            this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
-            // 
             // textBox2
             // 
             this.textBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.textBox2.Font = new System.Drawing.Font("Segoe Print", 27.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
+            this.textBox2.Font = new System.Drawing.Font("Segoe Print", 20.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(238)));
             this.textBox2.Location = new System.Drawing.Point(3, 3);
             this.textBox2.Multiline = true;
             this.textBox2.Name = "textBox2";
@@ -469,8 +465,13 @@
             this.textBox2.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
             this.textBox2.Size = new System.Drawing.Size(890, 645);
             this.textBox2.TabIndex = 0;
-            this.textBox2.Text = "\r\n\r\n\r\nAutor : Michał Gruszka\r\nKontakt : michal.gruszka01@gmail.com\r\n";
+            this.textBox2.Text = "\r\n\r\n\r\nAutor : Michał Gruszka\r\nKontakt : michal.gruszka01@gmail.com\r\n\r\nPrzeznaczen" +
+    "iem programu jest tworzenie testów, edycja oraz rozwiązywanie.\r\n\r\n";
             this.textBox2.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            // 
+            // timer1
+            // 
+            this.timer1.Tick += new System.EventHandler(this.timer1_Tick_1);
             // 
             // Form1
             // 
