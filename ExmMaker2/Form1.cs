@@ -40,6 +40,7 @@ namespace ExmMaker2
             listaPytan.Add(new Pytanie());
             this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             Wyswietlanie();
+  
         }
         private void Wyswietlanie()
         {
@@ -586,6 +587,28 @@ namespace ExmMaker2
                 SetStyle(ControlStyles.SupportsTransparentBackColor, true);
                 BackColor = Color.Transparent;
             }
+        }
+        protected override void OnFormClosing( FormClosingEventArgs e)
+        {
+
+            base.OnFormClosing(e);
+
+            if (e.CloseReason == CloseReason.WindowsShutDown) return;
+
+            // Confirm user wants to close
+            switch (MessageBox.Show(this, "Jeżeli nie zapisałeś postępów, mogą zostać utracone. Napewno chcesz zakończyć?", "Zamykanie aplikacji !", MessageBoxButtons.YesNo))
+            {
+                case DialogResult.No:
+                    e.Cancel = true;
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
